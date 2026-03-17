@@ -390,7 +390,7 @@
     flex-shrink: 0;
   }
   .app-ticket.accent-live .app-ticket-accent { background: #22c55e; }
-  .app-ticket.accent-won .app-ticket-accent { background: var(--blue); }
+  .app-ticket.accent-won .app-ticket-accent { background: #22c55e; }
   .app-ticket.accent-pending .app-ticket-accent { background: #f97316; }
   .app-ticket-main {
     flex: 1;
@@ -408,6 +408,8 @@
     justify-content: space-between;
     gap: 10px;
   }
+  .app-ticket-match-wrap { display: flex; align-items: center; gap: 6px; flex: 1; min-width: 0; }
+  .app-ticket-icon { flex-shrink: 0; width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.7); }
   .app-ticket-match {
     font-size: 10px;
     font-weight: 700;
@@ -430,7 +432,7 @@
     text-transform: uppercase;
   }
   .app-ticket-status.live { background: rgba(34,197,94,0.25); color: #4ade80; }
-  .app-ticket-status.won { background: rgba(59,130,246,0.25); color: var(--blue-pale); }
+  .app-ticket-status.won { background: rgba(34,197,94,0.25); color: #4ade80; }
   .app-ticket-status.pending { background: rgba(249,115,22,0.25); color: #fb923c; }
   .live-pulse { animation: pulse-dot 1.5s ease infinite; display: inline-block; margin-right: 2px; }
   .app-ticket-meta {
@@ -616,12 +618,6 @@
   }
   .dm-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
   .dm-top span { font-size: 13px; font-weight: 700; }
-  .dm-period {
-    font-size: 10px; color: var(--muted2);
-    background: rgba(255,255,255,0.04);
-    padding: 4px 10px; border-radius: 6px;
-    border: 1px solid rgba(255,255,255,0.06);
-  }
   .dm-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 16px; }
   .dm-stat {
     background: rgba(255,255,255,0.03);
@@ -656,6 +652,12 @@
   .dm-row-body { flex: 1; min-width: 0; }
   .dm-sport { color: var(--muted2); font-size: 9px; margin-top: 1px; }
   .dm-row-badge { flex-shrink: 0; margin-left: 10px; }
+  .dm-row.dm-row-in-progress { border-left: 3px solid #f97316; }
+  .dm-row.dm-row-won { border-left: 3px solid #22c55e; }
+  .dm-row.dm-row-lost { border-left: 3px solid var(--red); }
+  .dm-row-lost .dm-price-lost { color: rgba(255,255,255,0.85) !important; }
+  .dm-row-icon { flex-shrink: 0; width: 22px; height: 22px; margin-right: 10px; display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.8); }
+  .dm-row-with-icon { display: flex; align-items: flex-start; flex: 1; min-width: 0; }
 
   /* ── HOW IT WORKS ── */
   .hiw { background: rgba(10,17,40,0.5); }
@@ -1105,7 +1107,10 @@
                 <div class="app-ticket-accent"></div>
                 <div class="app-ticket-main">
                   <div class="app-ticket-top">
-                    <div class="app-ticket-match">Arsenal vs Barcelona</div>
+                    <div class="app-ticket-match-wrap">
+                      <div class="app-ticket-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 7l4.76 3.45-1.76 5.55h-6l-1.76-5.55z"/><path d="M12 7V2"/><path d="M16.76 10.45l4.65-2.2"/><path d="M15 16l3 4.5"/><path d="M9 16l-3 4.5"/><path d="M7.24 10.45l-4.65-2.2"/></svg></div>
+                      <div class="app-ticket-match">Arsenal vs Barcelona</div>
+                    </div>
                     <span class="app-ticket-status live"><span class="live-pulse">●</span> Min 67</span>
                   </div>
                   <div class="app-ticket-meta">Champions League · BTTS · <span data-price-format="{sym}25 · {winLabel}: {sym}38.75 @1.55">€25 · Win: €38.75 @1.55</span></div>
@@ -1115,7 +1120,10 @@
                 <div class="app-ticket-accent"></div>
                 <div class="app-ticket-main">
                   <div class="app-ticket-top">
-                    <div class="app-ticket-match">Lakers vs Celtics</div>
+                    <div class="app-ticket-match-wrap">
+                      <div class="app-ticket-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2v20"/><path d="M6 4a9.5 9.5 0 0 1 0 16"/><path d="M18 4a9.5 9.5 0 0 0 0 16"/></svg></div>
+                      <div class="app-ticket-match">Lakers vs Celtics</div>
+                    </div>
                     <span class="app-ticket-status pending">3:00 PM</span>
                   </div>
                   <div class="app-ticket-meta">NBA · Tatum O25.5 · <span data-price-format="@1.90 · {sym}{amount}" data-price-amount="20">@1.90 · €20</span></div>
@@ -1125,10 +1133,13 @@
                 <div class="app-ticket-accent"></div>
                 <div class="app-ticket-main">
                   <div class="app-ticket-top">
-                    <div class="app-ticket-match">Juventus / Inter / Milan</div>
+                    <div class="app-ticket-match-wrap">
+                      <div class="app-ticket-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 7l4.76 3.45-1.76 5.55h-6l-1.76-5.55z"/><path d="M12 7V2"/><path d="M16.76 10.45l4.65-2.2"/><path d="M15 16l3 4.5"/><path d="M9 16l-3 4.5"/><path d="M7.24 10.45l-4.65-2.2"/></svg></div>
+                      <div class="app-ticket-match">Juventus - Inter</div>
+                    </div>
                     <span class="app-ticket-status won">WON</span>
                   </div>
-                  <div class="app-ticket-meta">Serie A · 3-Leg · <span data-price-format="@8.10 · {sym}{amount}" data-price-amount="10">@8.10 · €10</span></div>
+                  <div class="app-ticket-meta">Serie A · Under 2.5 · 2-0 · <span data-price-format="@8.10 · {sym}{amount}" data-price-amount="10">@8.10 · €10</span></div>
                 </div>
               </div>
             </div>
@@ -1205,7 +1216,7 @@
         </div>
       </div>
       <div class="dash-mock reveal">
-        <div class="dm-top"><span data-i18n="product.perfOverview">Performance Overview</span><span class="dm-period" data-i18n="product.last30">Last 30 days</span></div>
+        <div class="dm-top"><span data-i18n="product.perfOverview">Performance Overview</span></div>
         <div class="dm-stats">
           <div class="dm-stat"><div class="dv green" data-price-simple data-price-value="824" data-price-prefix="+">+€824</div><div class="dl" data-i18n="product.netPnl">Net P&L</div></div>
           <div class="dm-stat"><div class="dv blue">64%</div><div class="dl" data-i18n="product.winRate">Win Rate</div></div>
@@ -1227,10 +1238,25 @@
           </div>
         </div>
         <div class="dm-rows">
-          <div class="dm-row-label" data-i18n="product.activeGames">Active Games</div>
-          <div class="dm-row"><div class="dm-row-body"><div style="font-weight:700">Arsenal vs Barcelona</div><div class="dm-sport">Champions League · Both Teams to Score · Goal</div><div class="dm-sport dm-price-stake-win" style="color:var(--blue-light);" data-price-format="{sym}25 · {winLabel}: {sym}38.75 @1.55" data-price-stake="25" data-price-win="38.75" data-price-odds="1.55">€25 · Win: €38.75 @1.55</div></div><span class="dm-row-badge" style="color:#4ade80; font-weight:700; font-size:11px;">● LIVE 67'</span></div>
-          <div class="dm-row"><div class="dm-row-body"><div style="font-weight:700">Los Angeles Lakers vs Boston Celtics</div><div class="dm-sport">NBA · Jayson Tatum Over 25.5 Points</div><div class="dm-sport dm-price-amount" data-price-format="@1.90 · {sym}{amount}" data-price-amount="20">@1.90 · €20</div></div><span class="dm-row-badge" style="color:#fb923c; font-weight:700; font-size:11px;">3:00 PM</span></div>
-          <div class="dm-row"><div class="dm-row-body"><div style="font-weight:700">Juventus / Inter / Milan</div><div class="dm-sport">Serie A · 3-Leg Accumulator</div><div class="dm-sport dm-price-amount" data-price-format="@8.10 · {sym}{amount}" data-price-amount="10">@8.10 · €10</div></div><span class="dm-row-badge" style="color:#60a5fa; font-weight:700; font-size:11px;">WON</span></div>
+          <div class="dm-row-label" data-i18n="product.ticketHistory">Ticket History</div>
+          <div class="dm-row dm-row-in-progress">
+            <div class="dm-row-with-icon">
+              <div class="dm-row-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 7l4.76 3.45-1.76 5.55h-6l-1.76-5.55z"/><path d="M12 7V2"/><path d="M16.76 10.45l4.65-2.2"/><path d="M15 16l3 4.5"/><path d="M9 16l-3 4.5"/><path d="M7.24 10.45l-4.65-2.2"/></svg></div>
+              <div class="dm-row-body"><div style="font-weight:700">Champions League Parlay 4/8</div><div class="dm-sport" data-i18n="product.ticketFormatInProgress">@25.4 · €10 · Win: €254</div></div>
+            </div><span class="dm-row-badge" style="color:#fb923c; font-weight:700; font-size:11px;" data-i18n="product.inProgress">IN PROGRESS</span>
+          </div>
+          <div class="dm-row dm-row-won">
+            <div class="dm-row-with-icon">
+              <div class="dm-row-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2v20"/><path d="M6 4a9.5 9.5 0 0 1 0 16"/><path d="M18 4a9.5 9.5 0 0 0 0 16"/></svg></div>
+              <div class="dm-row-body"><div style="font-weight:700">NBA Player Props 4/4</div><div class="dm-sport" data-i18n="product.ticketFormatWon">@17 · €5 · Win: €85</div></div>
+            </div><span class="dm-row-badge" style="color:#4ade80; font-weight:700; font-size:11px;" data-i18n="product.won">WON</span>
+          </div>
+          <div class="dm-row dm-row-lost">
+            <div class="dm-row-with-icon">
+              <div class="dm-row-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M4.93 4.93a7.5 7.5 0 0 1 0 14.14"/><path d="M19.07 4.93a7.5 7.5 0 0 0 0 14.14"/></svg></div>
+              <div class="dm-row-body"><div style="font-weight:700">Australian Open 0/1</div><div class="dm-sport dm-price-lost" data-i18n="product.ticketFormatLost">@1.85 · €30 · Lost: €72.15</div></div>
+            </div><span class="dm-row-badge" style="color:#f87171; font-weight:700; font-size:11px;" data-i18n="product.lost">LOST</span>
+          </div>
         </div>
       </div>
     </div>
