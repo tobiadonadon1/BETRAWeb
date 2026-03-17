@@ -1,0 +1,1336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Betra — Smart Betting Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #050a18;
+    --surface: #0a1128;
+    --card: rgba(255,255,255,0.03);
+    --glass: rgba(255,255,255,0.04);
+    --glass-border: rgba(255,255,255,0.08);
+    --blue: #3b82f6;
+    --blue-deep: #1d4ed8;
+    --blue-light: #60a5fa;
+    --blue-pale: #93c5fd;
+    --green: #22c55e;
+    --green-dim: rgba(34,197,94,0.15);
+    --orange: #f97316;
+    --red: #ef4444;
+    --text: #f0f4f8;
+    --muted: rgba(255,255,255,0.45);
+    --muted2: rgba(255,255,255,0.28);
+    --radius: 16px;
+    --radius-sm: 10px;
+    --radius-xs: 6px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── NAV ── */
+  .nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 300;
+    height: 68px;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 5%;
+    background: rgba(5,10,24,0.6);
+    backdrop-filter: blur(24px) saturate(1.8);
+    -webkit-backdrop-filter: blur(24px) saturate(1.8);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    transition: background 0.4s, box-shadow 0.4s;
+  }
+  .nav.scrolled {
+    background: rgba(5,10,24,0.88);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+  .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .nav-logo-img { display: block; object-fit: contain; }
+  .nav-logo-text { font-size: 18px; font-weight: 800; color: #fff; letter-spacing: 3.5px; }
+  .nav-links { display: flex; gap: 36px; }
+  .nav-links a {
+    color: var(--muted);
+    font-size: 13px; font-weight: 500;
+    text-decoration: none;
+    letter-spacing: 0.3px;
+    transition: color 0.25s;
+    position: relative;
+  }
+  .nav-links a::after {
+    content: '';
+    position: absolute; bottom: -4px; left: 0; right: 0;
+    height: 1.5px;
+    background: var(--blue);
+    transform: scaleX(0);
+    transform-origin: center;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .nav-links a:hover { color: #fff; }
+  .nav-links a:hover::after { transform: scaleX(1); }
+  .nav-cta {
+    background: var(--blue-deep);
+    color: #fff; border: none;
+    padding: 9px 24px; border-radius: 10px;
+    font-size: 13px; font-weight: 600;
+    cursor: pointer; letter-spacing: 0.3px;
+    transition: transform 0.2s, box-shadow 0.3s, background 0.2s;
+  }
+  .nav-cta:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(29,78,216,0.4);
+    background: #2563eb;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center;
+    padding: 120px 6% 80px;
+    position: relative; overflow: hidden; z-index: 1;
+  }
+  .hero-glow {
+    position: absolute; top: -120px; left: 50%; transform: translateX(-50%);
+    width: 900px; height: 600px;
+    background: radial-gradient(ellipse at center, rgba(29,78,216,0.18) 0%, rgba(59,130,246,0.06) 40%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-glow-2 {
+    position: absolute; top: 60%; left: 50%; transform: translateX(-50%);
+    width: 600px; height: 400px;
+    background: radial-gradient(ellipse at center, rgba(99,102,241,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-badge {
+    background: rgba(59,130,246,0.08);
+    border: 1px solid rgba(59,130,246,0.2);
+    color: var(--blue-pale);
+    font-size: 11px; font-weight: 600;
+    padding: 6px 18px; border-radius: 24px;
+    letter-spacing: 2px;
+    margin-bottom: 32px;
+    display: inline-flex; align-items: center; gap: 8px;
+    backdrop-filter: blur(8px);
+    animation: fadeDown 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  .hero-badge-dot {
+    width: 6px; height: 6px;
+    background: var(--blue);
+    border-radius: 50%;
+    animation: pulse-dot 2s ease infinite;
+  }
+  .hero h1 {
+    font-size: clamp(40px, 6.5vw, 76px);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -2.5px;
+    margin-bottom: 24px;
+    animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+  }
+  .hero h1 em { font-style: normal; color: var(--blue); }
+  .hero-sub {
+    font-size: clamp(15px, 1.6vw, 18px);
+    color: var(--muted);
+    max-width: 540px;
+    line-height: 1.75;
+    margin-bottom: 44px;
+    font-weight: 400;
+    animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
+  }
+  .hero-btns {
+    display: flex; gap: 14px;
+    justify-content: center;
+    margin-bottom: 72px;
+    animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
+  }
+  .btn-p {
+    background: var(--blue-deep);
+    color: #fff; border: none;
+    padding: 14px 34px; border-radius: 12px;
+    font-size: 14px; font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.3s;
+    position: relative; overflow: hidden;
+  }
+  .btn-p::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .btn-p:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(29,78,216,0.45); }
+  .btn-p:hover::before { opacity: 1; }
+  .btn-s {
+    background: rgba(255,255,255,0.04);
+    color: rgba(255,255,255,0.7);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 14px 34px; border-radius: 12px;
+    font-size: 14px; font-weight: 500;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    transition: border-color 0.3s, color 0.3s, background 0.3s;
+  }
+  .btn-s:hover { border-color: rgba(255,255,255,0.2); color: #fff; background: rgba(255,255,255,0.06); }
+
+  /* ── iPHONE MOCKUP ── */
+  .iphone-wrapper {
+    position: relative;
+    animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both;
+  }
+  .iphone-glow {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 360px; height: 500px;
+    background: radial-gradient(ellipse, rgba(59,130,246,0.15) 0%, transparent 70%);
+    pointer-events: none;
+    filter: blur(40px);
+  }
+  .iphone {
+    width: 280px;
+    height: 572px;
+    position: relative;
+    border-radius: 48px;
+    background: linear-gradient(145deg, #1a1a2e 0%, #0d0d1a 100%);
+    border: 2.5px solid rgba(255,255,255,0.12);
+    box-shadow:
+      0 0 0 1px rgba(0,0,0,0.8),
+      0 25px 80px rgba(0,0,0,0.6),
+      0 0 60px rgba(59,130,246,0.08),
+      inset 0 1px 0 rgba(255,255,255,0.06);
+    overflow: hidden;
+    z-index: 2;
+  }
+  .iphone-notch {
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 120px; height: 32px;
+    background: #0a0a14;
+    border-radius: 0 0 20px 20px;
+    z-index: 10;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    padding-top: 4px;
+  }
+  .iphone-camera {
+    width: 10px; height: 10px;
+    background: radial-gradient(circle, #1a1a3a, #0d0d1a);
+    border-radius: 50%;
+    border: 1.5px solid rgba(255,255,255,0.08);
+  }
+  .iphone-screen {
+    position: absolute;
+    top: 12px; left: 12px; right: 12px; bottom: 12px;
+    border-radius: 38px;
+    background: #080e1e;
+    overflow: hidden;
+    display: flex; flex-direction: column;
+  }
+  .iphone-statusbar {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 14px 24px 8px;
+    font-size: 11px; font-weight: 600;
+    color: rgba(255,255,255,0.5);
+  }
+  .iphone-home {
+    width: 120px; height: 4px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 2px;
+    margin: 8px auto 10px;
+  }
+
+  /* ── DASHBOARD INSIDE PHONE ── */
+  .app-content {
+    flex: 1;
+    padding: 4px 14px 0;
+    display: flex; flex-direction: column;
+    gap: 8px;
+    overflow: hidden;
+  }
+  .app-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 2px 0 6px;
+  }
+  .app-logo { display: flex; align-items: center; gap: 6px; }
+  .app-logo svg { width: 18px; height: 18px; }
+  .app-logo-text { font-size: 11px; font-weight: 800; letter-spacing: 2px; color: #fff; }
+  .app-avatar {
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--blue-deep), var(--blue));
+    border: 1.5px solid rgba(59,130,246,0.3);
+  }
+  .app-greeting { font-size: 10px; color: var(--muted2); margin-bottom: 2px; }
+  .app-greeting strong { color: rgba(255,255,255,0.7); font-weight: 600; }
+  .app-stats {
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    gap: 5px;
+  }
+  .app-stat {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+    padding: 8px 6px;
+    text-align: center;
+    backdrop-filter: blur(4px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.03);
+  }
+  .app-stat-v {
+    font-size: 14px; font-weight: 800;
+    background: linear-gradient(135deg, var(--blue-light), var(--blue));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .app-stat-v.green-val {
+    background: linear-gradient(135deg, #4ade80, #22c55e);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .app-stat-l { font-size: 7px; color: var(--muted2); margin-top: 1px; letter-spacing: 0.5px; font-weight: 500; }
+
+  .app-chart-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 12px;
+    padding: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.02);
+  }
+  .app-chart-title { font-size: 8px; color: var(--muted2); letter-spacing: 0.8px; font-weight: 600; margin-bottom: 8px; }
+  .app-chart-svg { width: 100%; height: 50px; }
+  .app-tickets-label { font-size: 8px; color: var(--muted2); letter-spacing: 0.8px; font-weight: 600; margin-top: 2px; }
+  .app-ticket {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 10px;
+    padding: 8px 10px;
+    display: flex; justify-content: space-between; align-items: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.02);
+  }
+  .app-ticket-league { font-size: 7px; color: var(--muted2); letter-spacing: 0.5px; }
+  .app-ticket-match { font-size: 10px; font-weight: 600; color: rgba(255,255,255,0.85); }
+  .app-ticket-meta { font-size: 8px; color: var(--blue-light); margin-top: 1px; }
+  .app-ticket-badge {
+    font-size: 7px; font-weight: 700;
+    padding: 3px 7px; border-radius: 6px;
+    letter-spacing: 0.5px;
+  }
+  .badge-live { background: rgba(34,197,94,0.15); color: #4ade80; border: 1px solid rgba(34,197,94,0.2); }
+  .badge-won { background: rgba(59,130,246,0.12); color: var(--blue-pale); }
+  .badge-pending { background: rgba(249,115,22,0.12); color: #fb923c; }
+  .live-pulse { animation: pulse-dot 1.5s ease infinite; display: inline-block; margin-right: 3px; }
+
+  /* ── GLASS CARD ── */
+  .glass {
+    background: rgba(255,255,255,0.03);
+    backdrop-filter: blur(12px) saturate(1.2);
+    -webkit-backdrop-filter: blur(12px) saturate(1.2);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: var(--radius);
+  }
+
+  /* ── SECTIONS ── */
+  .sec { padding: 100px 6%; position: relative; z-index: 1; }
+  .sec-label {
+    font-size: 11px; font-weight: 700;
+    color: var(--blue);
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    display: inline-flex; align-items: center; gap: 10px;
+  }
+  .sec-label::before {
+    content: '';
+    width: 20px; height: 1.5px;
+    background: var(--blue);
+    display: inline-block;
+  }
+  .sec-title {
+    font-size: clamp(28px, 3.8vw, 46px);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -1.2px;
+    margin-bottom: 16px;
+  }
+  .sec-sub {
+    font-size: 16px;
+    color: var(--muted);
+    line-height: 1.75;
+    margin-bottom: 52px;
+    font-weight: 400;
+  }
+
+  /* ── PHILOSOPHY ── */
+  .philosophy { background: rgba(8,14,30,0.5); }
+  .phil-quote {
+    position: relative;
+    padding: 36px 40px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: var(--radius);
+    max-width: 720px; margin: 44px auto 60px;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+    overflow: hidden;
+  }
+  .phil-quote::before {
+    content: '';
+    position: absolute; top: 0; left: 0;
+    width: 3px; height: 100%;
+    background: linear-gradient(180deg, var(--blue), var(--blue-deep), transparent);
+    border-radius: 2px;
+  }
+  .phil-quote::after {
+    content: '"';
+    position: absolute; top: 16px; right: 28px;
+    font-size: 72px; font-weight: 800;
+    color: rgba(59,130,246,0.06);
+    line-height: 1;
+    font-family: Georgia, serif;
+  }
+  .phil-quote p { font-size: 17px; font-weight: 500; line-height: 1.7; color: rgba(255,255,255,0.8); font-style: italic; position: relative; }
+  .phil-quote cite {
+    display: flex; align-items: center; gap: 10px;
+    margin-top: 18px; font-size: 12px; color: var(--muted2); font-style: normal; letter-spacing: 0.5px;
+    position: relative;
+  }
+  .phil-quote cite::before {
+    content: '';
+    width: 24px; height: 1px;
+    background: rgba(59,130,246,0.3);
+    display: inline-block;
+  }
+  .phil-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    max-width: 960px; margin: 0 auto;
+  }
+  .phil-card {
+    background: rgba(255,255,255,0.025);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: var(--radius);
+    padding: 32px 22px;
+    text-align: center;
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s, box-shadow 0.4s;
+    position: relative; overflow: hidden;
+  }
+  .phil-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--blue), var(--blue-light));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .phil-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(59,130,246,0.15);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.2), 0 0 40px rgba(59,130,246,0.04);
+  }
+  .phil-card:hover::before { transform: scaleX(1); }
+  .pc-icon {
+    width: 44px; height: 44px;
+    background: rgba(59,130,246,0.08);
+    border: 1px solid rgba(59,130,246,0.12);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 18px;
+    transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;
+  }
+  .phil-card:hover .pc-icon {
+    background: rgba(59,130,246,0.14);
+    border-color: rgba(59,130,246,0.25);
+    box-shadow: 0 0 20px rgba(59,130,246,0.1);
+  }
+  .phil-card h3 { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+  .phil-card p { font-size: 13px; color: var(--muted); line-height: 1.65; }
+
+  /* ── PRODUCT ── */
+  .product { background: var(--bg); }
+  .prod-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 48px; align-items: center;
+    max-width: 1100px; margin: 0 auto;
+  }
+  .feat-list { display: flex; flex-direction: column; gap: 24px; }
+  .feat {
+    display: flex; gap: 16px; align-items: flex-start;
+    padding: 16px;
+    border-radius: var(--radius);
+    transition: background 0.3s;
+  }
+  .feat:hover { background: rgba(255,255,255,0.02); }
+  .feat-ico {
+    width: 44px; height: 44px; min-width: 44px;
+    background: rgba(59,130,246,0.08);
+    border: 1px solid rgba(59,130,246,0.15);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.3s, border-color 0.3s;
+  }
+  .feat:hover .feat-ico { background: rgba(59,130,246,0.14); border-color: rgba(59,130,246,0.25); }
+  .feat h4 { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+  .feat p { font-size: 13px; color: var(--muted); line-height: 1.65; }
+
+  .dash-mock {
+    background: rgba(8,14,30,0.8);
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.08);
+    padding: 22px;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3), 0 0 40px rgba(59,130,246,0.04);
+    position: relative;
+    overflow: hidden;
+  }
+  .dash-mock::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(59,130,246,0.2), transparent);
+  }
+  .dm-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+  .dm-top span { font-size: 13px; font-weight: 700; }
+  .dm-period {
+    font-size: 10px; color: var(--muted2);
+    background: rgba(255,255,255,0.04);
+    padding: 4px 10px; border-radius: 6px;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .dm-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 16px; }
+  .dm-stat {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 12px;
+    padding: 12px 10px; text-align: center;
+  }
+  .dm-stat .dv { font-size: 18px; font-weight: 800; }
+  .dm-stat .dl { font-size: 9px; color: var(--muted2); margin-top: 2px; font-weight: 500; }
+  .green { color: #4ade80; } .blue { color: var(--blue-light); } .orange { color: #fb923c; }
+  .dm-chart-wrap {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.04);
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 16px;
+  }
+  .dm-chart-label { font-size: 9px; color: var(--muted2); font-weight: 600; letter-spacing: 0.5px; margin-bottom: 10px; }
+  .dm-chart { height: 70px; display: flex; align-items: flex-end; gap: 4px; }
+  .dc-bar { flex: 1; border-radius: 3px 3px 0 0; transition: height 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+  .dm-rows { display: flex; flex-direction: column; gap: 6px; }
+  .dm-row-label { font-size: 9px; color: var(--muted2); font-weight: 600; letter-spacing: 0.5px; margin-bottom: 4px; }
+  .dm-row {
+    display: flex; justify-content: space-between; align-items: center;
+    background: rgba(255,255,255,0.025);
+    border: 1px solid rgba(255,255,255,0.04);
+    border-radius: var(--radius-sm);
+    padding: 10px 12px; font-size: 11px;
+    transition: background 0.3s;
+  }
+  .dm-row:hover { background: rgba(255,255,255,0.04); }
+  .dm-sport { color: var(--muted2); font-size: 9px; margin-top: 1px; }
+
+  /* ── HOW IT WORKS ── */
+  .hiw { background: rgba(10,17,40,0.5); }
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2px;
+    max-width: 960px; margin: 0 auto;
+    border-radius: var(--radius);
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .step {
+    text-align: center;
+    padding: 36px 24px;
+    background: rgba(255,255,255,0.02);
+    position: relative;
+    transition: background 0.3s;
+  }
+  .step:hover { background: rgba(255,255,255,0.04); }
+  .step-n {
+    width: 48px; height: 48px;
+    background: rgba(29,78,216,0.12);
+    border: 2px solid rgba(29,78,216,0.3);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 17px; font-weight: 800; color: var(--blue);
+    margin: 0 auto 20px;
+    transition: border-color 0.3s, background 0.3s;
+  }
+  .step:hover .step-n { border-color: var(--blue); background: rgba(29,78,216,0.2); }
+  .step h3 { font-size: 14px; font-weight: 700; margin-bottom: 8px; }
+  .step p { font-size: 12px; color: var(--muted); line-height: 1.65; }
+
+  /* ── PRICING ── */
+  .pricing { background: var(--bg); }
+  .tiers-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    max-width: 920px; margin: 0 auto;
+  }
+  .tier {
+    border-radius: 20px;
+    padding: 32px 26px;
+    border: 1px solid rgba(255,255,255,0.06);
+    background: rgba(255,255,255,0.02);
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s, box-shadow 0.4s;
+  }
+  .tier:hover { transform: translateY(-4px); }
+  .tier.pop {
+    border-color: rgba(29,78,216,0.35);
+    background: rgba(29,78,216,0.06);
+    position: relative;
+    box-shadow: 0 0 60px rgba(29,78,216,0.08);
+  }
+  .tier.pop:hover { box-shadow: 0 12px 40px rgba(29,78,216,0.15); }
+  .tier.elx { border-color: rgba(124,58,237,0.25); background: rgba(124,58,237,0.04); }
+  .tier.elx:hover { box-shadow: 0 12px 40px rgba(124,58,237,0.1); }
+  .pop-badge {
+    position: absolute; top: -12px; left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, var(--blue-deep), var(--blue));
+    color: #fff; font-size: 10px; font-weight: 700;
+    padding: 4px 16px; border-radius: 12px;
+    white-space: nowrap; letter-spacing: 0.5px;
+    box-shadow: 0 4px 12px rgba(29,78,216,0.3);
+  }
+  .t-name { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px; color: var(--muted); }
+  .t-price { font-size: 36px; font-weight: 800; margin-bottom: 6px; letter-spacing: -1px; }
+  .t-price span { font-size: 14px; font-weight: 400; color: var(--muted2); }
+  .t-desc { font-size: 13px; color: var(--muted); margin-bottom: 24px; line-height: 1.6; }
+  .t-feats { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 26px; }
+  .t-feats li { display: flex; gap: 10px; font-size: 13px; color: rgba(255,255,255,0.7); align-items: center; }
+  .ck { color: #4ade80; font-size: 14px; }
+  .dx { color: rgba(255,255,255,0.15); }
+  .t-btn {
+    width: 100%; padding: 12px;
+    border-radius: 12px;
+    font-size: 13px; font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.3s;
+  }
+  .t-btn:hover { transform: translateY(-1px); }
+  .t-btn.out { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.12); color: rgba(255,255,255,0.7); }
+  .t-btn.out:hover { border-color: rgba(255,255,255,0.2); }
+  .t-btn.fil { background: var(--blue-deep); border: none; color: #fff; }
+  .t-btn.fil:hover { box-shadow: 0 6px 20px rgba(29,78,216,0.4); }
+  .t-btn.prm { background: #7c3aed; border: none; color: #fff; }
+  .t-btn.prm:hover { box-shadow: 0 6px 20px rgba(124,58,237,0.4); }
+
+  /* ── TEAM ── */
+  .team-sec { background: rgba(10,17,40,0.5); }
+  .team-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px; max-width: 700px; margin: 0 auto;
+  }
+  .team-card {
+    background: rgba(255,255,255,0.025);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 20px;
+    padding: 36px 28px; text-align: center;
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s;
+    backdrop-filter: blur(8px);
+  }
+  .team-card:hover { transform: translateY(-4px); border-color: rgba(59,130,246,0.15); }
+  .t-av {
+    width: 72px; height: 72px;
+    background: linear-gradient(135deg, #0f3fa3, var(--blue-deep));
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; font-weight: 800;
+    margin: 0 auto 16px;
+    box-shadow: 0 8px 24px rgba(29,78,216,0.2);
+  }
+  .t-nm { font-size: 18px; font-weight: 800; margin-bottom: 4px; }
+  .t-rl { font-size: 12px; color: var(--blue-light); margin-bottom: 16px; font-weight: 600; letter-spacing: 0.3px; }
+  .t-bio { font-size: 13px; color: var(--muted); line-height: 1.7; }
+  .t-tags { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-top: 16px; }
+  .ttag {
+    background: rgba(59,130,246,0.08);
+    border: 1px solid rgba(59,130,246,0.15);
+    color: var(--blue-pale);
+    font-size: 10px; font-weight: 600;
+    padding: 4px 10px; border-radius: 20px;
+  }
+
+  /* ── CTA ── */
+  .cta-sec {
+    background: rgba(10,17,40,0.7);
+    border-top: 1px solid rgba(59,130,246,0.08);
+    text-align: center;
+    padding: 100px 6%;
+    position: relative; z-index: 1;
+    overflow: hidden;
+  }
+  .cta-glow {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px; height: 300px;
+    background: radial-gradient(ellipse, rgba(29,78,216,0.1) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .cta-sec h2 { font-size: clamp(28px, 4.5vw, 48px); font-weight: 800; margin-bottom: 16px; letter-spacing: -1px; position: relative; }
+  .cta-sec p { font-size: 17px; color: var(--muted); margin-bottom: 40px; position: relative; }
+
+  /* ── FOOTER ── */
+  .footer {
+    padding: 40px 6%;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 16px;
+    position: relative; z-index: 1;
+  }
+  .ft { font-size: 12px; color: var(--muted2); }
+  .flinks { display: flex; gap: 24px; }
+  .flinks a { font-size: 12px; color: var(--muted2); text-decoration: none; transition: color 0.2s; }
+  .flinks a:hover { color: var(--text); }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(28px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── STARFIELD ── */
+  #starfield {
+    position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(5,10,24,0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 1000;
+    opacity: 0; visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s;
+  }
+  .modal-overlay.open { opacity: 1; visibility: visible; }
+  .modal {
+    position: relative;
+    width: 100%; max-width: 420px;
+    margin: 20px;
+    background: rgba(10,17,40,0.95);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 20px;
+    padding: 40px 36px;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.5), 0 0 60px rgba(59,130,246,0.08);
+    transform: scale(0.95); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .modal-overlay.open .modal { transform: scale(1); }
+  .modal-close {
+    position: absolute; top: 16px; right: 16px;
+    width: 36px; height: 36px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+    color: var(--muted);
+    font-size: 20px; line-height: 1;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s, color 0.2s;
+  }
+  .modal-close:hover { background: rgba(255,255,255,0.1); color: #fff; }
+  .modal-header { text-align: center; margin-bottom: 28px; position: relative; }
+  .modal-logo { width: 44px; height: 44px; margin: 0 auto 14px; display: block; object-fit: contain; }
+  .modal-title { font-size: 22px; font-weight: 800; margin-bottom: 6px; letter-spacing: -0.5px; }
+  .modal-sub { font-size: 13px; color: var(--muted); }
+  .modal-form { display: flex; flex-direction: column; }
+  .modal-form form { display: flex; flex-direction: column; gap: 26px; }
+  .modal-field label {
+    display: block; font-size: 12px; font-weight: 600; color: var(--muted);
+    margin-bottom: 12px; letter-spacing: 0.3px;
+  }
+  .modal-field input {
+    width: 100%;
+    padding: 14px 16px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    color: #fff;
+    font-size: 15px; font-family: inherit;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .modal-field input::placeholder { color: rgba(255,255,255,0.25); }
+  .modal-field input:focus {
+    outline: none;
+    border-color: rgba(59,130,246,0.5);
+    background: rgba(255,255,255,0.06);
+  }
+  .modal-submit {
+    width: 100%;
+    padding: 14px;
+    background: var(--blue-deep);
+    border: none; border-radius: 12px;
+    color: #fff; font-size: 15px; font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.3s, background 0.2s;
+  }
+  .modal-submit:hover {
+    background: #2563eb;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 24px rgba(29,78,216,0.4);
+  }
+  .modal-success { display: none; text-align: center; padding: 20px 0; }
+  .modal-success.visible { display: block; }
+  .modal-form.hidden { display: none; }
+  .modal-success h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; color: #4ade80; }
+  .modal-success p { font-size: 14px; color: var(--muted); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    .prod-grid { grid-template-columns: 1fr; }
+    .steps { grid-template-columns: 1fr 1fr; }
+    .tiers-grid { grid-template-columns: 1fr; max-width: 380px; }
+  }
+  @media (max-width: 768px) {
+    .nav-links { display: none; }
+    .hero { padding: 100px 5% 60px; }
+    .sec { padding: 80px 5%; }
+    .iphone { width: 240px; height: 490px; }
+    .iphone-notch { width: 100px; height: 28px; }
+    .steps { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="starfield"></canvas>
+
+<!-- SIGNUP MODAL -->
+<div class="modal-overlay" id="signup-modal" aria-hidden="true">
+  <div class="modal" role="dialog" aria-labelledby="modal-title">
+    <button class="modal-close" id="modal-close" aria-label="Close">&times;</button>
+    <div class="modal-header">
+      <img src="assets/betra-logo.png" alt="Betra" class="modal-logo" width="44" height="44">
+      <h2 class="modal-title" id="modal-title">Get early access</h2>
+      <p class="modal-sub">Join Betra. We'll notify you when we launch.</p>
+    </div>
+    <div class="modal-form" id="modal-form">
+      <form id="signup-form" action="https://formspree.io/f/mwvrwqko" method="POST">
+        <div class="modal-field">
+          <label for="signup-name">Name & Surname</label>
+          <input type="text" id="signup-name" name="name" placeholder="John Smith" required>
+        </div>
+        <div class="modal-field">
+          <label for="signup-email">Email</label>
+          <input type="email" id="signup-email" name="email" placeholder="john@example.com" required>
+        </div>
+        <button type="submit" class="modal-submit">Get Early Access</button>
+      </form>
+    </div>
+    <div class="modal-success" id="modal-success">
+      <h3>You're on the list</h3>
+      <p>We'll be in touch soon.</p>
+    </div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav class="nav" id="nav">
+  <a href="#" class="nav-logo">
+    <img src="assets/betra-logo.png" alt="Betra" class="nav-logo-img" width="32" height="32">
+    <span class="nav-logo-text">BETRA</span>
+  </a>
+  <div class="nav-links">
+    <a href="#product">Product</a>
+    <a href="#how-it-works">How it Works</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#team">Team</a>
+  </div>
+  <button class="nav-cta js-open-modal">Get Started Free</button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-glow-2"></div>
+
+  <div class="hero-badge">
+    <span class="hero-badge-dot"></span>
+    TRACK · ANALYZE · IMPROVE
+  </div>
+
+  <h1>Your bets.<br><em>Your data.</em><br>Your edge.</h1>
+  <p class="hero-sub">Betra is the analytics platform that turns your betting history into actionable insight — one unified dashboard for every sportsbook you use.</p>
+
+  <div class="hero-btns">
+    <button class="btn-p js-open-modal">Start Tracking Free</button>
+    <button class="btn-s" onclick="document.getElementById('how-it-works').scrollIntoView({behavior:'smooth'})">See How It Works</button>
+  </div>
+
+  <!-- iPhone 17 Pro Mockup -->
+  <div class="iphone-wrapper">
+    <div class="iphone-glow"></div>
+    <div class="iphone">
+      <div class="iphone-notch">
+        <div class="iphone-camera"></div>
+      </div>
+      <div class="iphone-screen">
+        <div class="iphone-statusbar">
+          <span>9:41</span>
+          <span style="display:flex; gap:4px; align-items:center;">
+            <svg width="14" height="10" viewBox="0 0 14 10" fill="none"><path d="M1 7h1.5v3H1zM4 5h1.5v5H4zM7 3h1.5v7H7zM10 1h1.5v9H10z" fill="rgba(255,255,255,0.5)"/></svg>
+            <svg width="14" height="10" viewBox="0 0 14 10" fill="none"><path d="M7 2C9.5 2 11.7 3 13.3 4.7L12 6C10.7 4.6 9 3.8 7 3.8S3.3 4.6 2 6L.7 4.7C2.3 3 4.5 2 7 2z" fill="rgba(255,255,255,0.5)"/></svg>
+            <svg width="22" height="10" viewBox="0 0 22 10" fill="none"><rect x="0" y="1" width="18" height="8" rx="2" stroke="rgba(255,255,255,0.3)" stroke-width="1"/><rect x="1.5" y="2.5" width="12" height="5" rx="1" fill="rgba(255,255,255,0.5)"/><rect x="19" y="3" width="2" height="4" rx="1" fill="rgba(255,255,255,0.2)"/></svg>
+          </span>
+        </div>
+
+        <div class="app-content">
+          <!-- Subtle diagonal accent lines matching the real app -->
+          <svg style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;opacity:0.04;z-index:0;" viewBox="0 0 256 548" fill="none">
+            <line x1="0" y1="200" x2="256" y2="80" stroke="white" stroke-width="0.5"/>
+            <line x1="0" y1="350" x2="256" y2="230" stroke="white" stroke-width="0.5"/>
+            <line x1="0" y1="500" x2="256" y2="380" stroke="white" stroke-width="0.5"/>
+          </svg>
+
+          <div style="position:relative;z-index:1;display:flex;flex-direction:column;gap:8px;height:100%;">
+            <!-- App logo centered -->
+            <div style="display:flex;flex-direction:column;align-items:center;padding:8px 0 2px;">
+              <img src="assets/betra-logo.png" alt="Betra" style="width:28px;height:28px;object-fit:contain;">
+              <div style="font-size:13px;font-weight:800;letter-spacing:5px;color:#fff;margin-top:4px;">B E T R A</div>
+              <div style="font-size:7px;color:rgba(255,255,255,0.35);letter-spacing:2px;margin-top:1px;">Track. Analyze. Win.</div>
+            </div>
+
+            <!-- Stats row -->
+            <div class="app-stats">
+              <div class="app-stat">
+                <div class="app-stat-v green-val">+€824</div>
+                <div class="app-stat-l">NET P&L</div>
+              </div>
+              <div class="app-stat">
+                <div class="app-stat-v">64%</div>
+                <div class="app-stat-l">WIN RATE</div>
+              </div>
+              <div class="app-stat">
+                <div class="app-stat-v">+12.3%</div>
+                <div class="app-stat-l">ROI</div>
+              </div>
+            </div>
+
+            <!-- Chart -->
+            <div class="app-chart-card">
+              <div class="app-chart-title">P&L TREND · 30D</div>
+              <svg class="app-chart-svg" viewBox="0 0 220 50" fill="none">
+                <defs>
+                  <linearGradient id="chart-fill" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="rgba(59,130,246,0.25)"/>
+                    <stop offset="100%" stop-color="rgba(59,130,246,0)"/>
+                  </linearGradient>
+                </defs>
+                <path d="M0 42 L18 38 L36 40 L54 32 L72 35 L90 28 L108 22 L126 25 L144 18 L162 14 L180 10 L198 12 L220 6" stroke="#3b82f6" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M0 42 L18 38 L36 40 L54 32 L72 35 L90 28 L108 22 L126 25 L144 18 L162 14 L180 10 L198 12 L220 6 L220 50 L0 50 Z" fill="url(#chart-fill)"/>
+                <circle cx="220" cy="6" r="3" fill="#3b82f6"/>
+              </svg>
+            </div>
+
+            <!-- Active tickets -->
+            <div class="app-tickets-label">ACTIVE TICKETS</div>
+            <div class="app-ticket">
+              <div>
+                <div class="app-ticket-league">CHAMPIONS LEAGUE</div>
+                <div class="app-ticket-match">Arsenal vs Barcelona</div>
+                <div class="app-ticket-meta">@2.40 · €25</div>
+              </div>
+              <div class="app-ticket-badge badge-live"><span class="live-pulse">●</span> 67'</div>
+            </div>
+            <div class="app-ticket">
+              <div>
+                <div class="app-ticket-league">SERIE A · 3-LEG ACCA</div>
+                <div class="app-ticket-match">Juve / Inter / Milan</div>
+                <div class="app-ticket-meta">@8.10 · €10</div>
+              </div>
+              <div class="app-ticket-badge badge-won">WON</div>
+            </div>
+            <div class="app-ticket">
+              <div>
+                <div class="app-ticket-league">NBA · HANDICAP</div>
+                <div class="app-ticket-match">Lakers -4.5 ATS</div>
+                <div class="app-ticket-meta">@1.90 · €20</div>
+              </div>
+              <div class="app-ticket-badge badge-pending">3PM</div>
+            </div>
+          </div>
+        </div>
+        <div class="iphone-home"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PHILOSOPHY -->
+<section class="sec philosophy" style="text-align:center;">
+  <div class="reveal">
+    <div class="sec-label">The Philosophy</div>
+    <h2 class="sec-title">Most people bet on instinct.<br>The best bet on data.</h2>
+  </div>
+  <div class="phil-quote reveal">
+    <p>"What gets measured gets managed. The difference between a losing bettor and a consistent one isn't luck — it's information. Betra gives everyone access to the same data edge the professionals use."</p>
+    <cite>— Betra founding principle</cite>
+  </div>
+  <div class="phil-grid reveal">
+    <div class="phil-card">
+      <div class="pc-icon"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M3 17L7 11L11 13L17 5" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <h3>Precision Tracking</h3>
+      <p>Every ticket logged with full context. Odds, stake, sportsbook, market — no data left behind.</p>
+    </div>
+    <div class="phil-card">
+      <div class="pc-icon"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="6" stroke="#3b82f6" stroke-width="2"/><path d="M10 7v3l2 2" stroke="#3b82f6" stroke-width="2" stroke-linecap="round"/></svg></div>
+      <h3>Pattern Recognition</h3>
+      <p>Discover which sports, leagues, and bet types you genuinely profit from — and eliminate the leaks.</p>
+    </div>
+    <div class="phil-card">
+      <div class="pc-icon"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M4 16L8 8L12 12L16 4" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <h3>Continuous Improvement</h3>
+      <p>Track ROI over time. See your edge clearly, adapt your strategy, and improve every month.</p>
+    </div>
+    <div class="phil-card">
+      <div class="pc-icon"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><rect x="3" y="3" width="6" height="6" rx="1" stroke="#3b82f6" stroke-width="2"/><rect x="11" y="3" width="6" height="6" rx="1" stroke="#3b82f6" stroke-width="2"/><rect x="3" y="11" width="6" height="6" rx="1" stroke="#3b82f6" stroke-width="2"/><rect x="11" y="11" width="6" height="6" rx="1" stroke="#3b82f6" stroke-width="2"/></svg></div>
+      <h3>Unified Portfolio</h3>
+      <p>Bet365, DraftKings, Snai, FanDuel — all your sportsbooks in one clean analytics hub.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCT -->
+<section class="sec product" id="product">
+  <div style="max-width:1100px; margin:0 auto;">
+    <div style="text-align:center; margin-bottom:60px;" class="reveal">
+      <div class="sec-label">The Product</div>
+      <h2 class="sec-title">Professional-grade analytics.<br>Zero complexity.</h2>
+    </div>
+    <div class="prod-grid">
+      <div class="feat-list reveal">
+        <div class="feat">
+          <div class="feat-ico"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><rect x="3" y="3" width="14" height="14" rx="2" stroke="#3b82f6" stroke-width="1.5"/><path d="M7 10l2 2 4-4" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+          <div><h4>OCR Bet Scanning</h4><p>Snap a screenshot of any bet slip. Betra reads it automatically — odds, stake, legs, everything.</p></div>
+        </div>
+        <div class="feat">
+          <div class="feat-ico"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M3 15L7 9l4 4 6-8" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div><h4>Full Analytics Dashboard</h4><p>ROI broken down by sport, league, bet type, and sportsbook. Know exactly where you win.</p></div>
+        </div>
+        <div class="feat">
+          <div class="feat-ico"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="6" stroke="#3b82f6" stroke-width="1.5"/><path d="M10 7v3l2 2" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+          <div><h4>Live Match Monitoring</h4><p>Real-time scores for every active ticket. See if you're winning or losing — in the moment.</p></div>
+        </div>
+        <div class="feat">
+          <div class="feat-ico"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M4 16V8l6-4 6 4v8" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="7" y="12" width="6" height="4" rx="1" stroke="#3b82f6" stroke-width="1.5"/></svg></div>
+          <div><h4>Bankroll Management</h4><p>Set a starting bankroll. Watch it evolve as bets settle — with full curve history.</p></div>
+        </div>
+        <div class="feat">
+          <div class="feat-ico"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M4 10h12M10 4l6 6-6 6" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div><h4>Multi-Leg Bet Tracking</h4><p>Visual progress bars for accumulators. Legs won, legs pending, legs remaining — at a glance.</p></div>
+        </div>
+      </div>
+      <div class="dash-mock reveal">
+        <div class="dm-top"><span>Performance Overview</span><span class="dm-period">Last 30 days</span></div>
+        <div class="dm-stats">
+          <div class="dm-stat"><div class="dv green">+€824</div><div class="dl">Net P&L</div></div>
+          <div class="dm-stat"><div class="dv blue">64%</div><div class="dl">Win Rate</div></div>
+          <div class="dm-stat"><div class="dv orange">+12.3%</div><div class="dl">ROI</div></div>
+        </div>
+        <div class="dm-chart-wrap">
+          <div class="dm-chart-label">P&L Trend</div>
+          <div class="dm-chart">
+            <div class="dc-bar" style="height:30%; background:rgba(59,130,246,0.2)"></div>
+            <div class="dc-bar" style="height:45%; background:rgba(59,130,246,0.28)"></div>
+            <div class="dc-bar" style="height:28%; background:rgba(59,130,246,0.18)"></div>
+            <div class="dc-bar" style="height:62%; background:rgba(59,130,246,0.4)"></div>
+            <div class="dc-bar" style="height:52%; background:rgba(59,130,246,0.35)"></div>
+            <div class="dc-bar" style="height:42%; background:rgba(59,130,246,0.3)"></div>
+            <div class="dc-bar" style="height:78%; background:rgba(59,130,246,0.55)"></div>
+            <div class="dc-bar" style="height:68%; background:rgba(59,130,246,0.48)"></div>
+            <div class="dc-bar" style="height:88%; background:rgba(59,130,246,0.65)"></div>
+            <div class="dc-bar" style="height:100%; background:#3b82f6"></div>
+          </div>
+        </div>
+        <div class="dm-rows">
+          <div class="dm-row-label">Active Tickets</div>
+          <div class="dm-row"><div><div style="font-weight:700">Arsenal vs Barcelona</div><div class="dm-sport">Champions League</div></div><span style="color:#4ade80; font-weight:700; font-size:11px;">● LIVE</span></div>
+          <div class="dm-row"><div><div style="font-weight:700">Juve / Inter 3-leg</div><div class="dm-sport">Serie A · Accumulator</div></div><span style="color:#60a5fa; font-weight:700; font-size:11px;">WON</span></div>
+          <div class="dm-row"><div><div style="font-weight:700">Lakers -4.5 ATS</div><div class="dm-sport">NBA · Handicap</div></div><span style="color:#fb923c; font-weight:700; font-size:11px;">PENDING</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="sec hiw" id="how-it-works" style="text-align:center;">
+  <div class="reveal">
+    <div class="sec-label">How It Works</div>
+    <h2 class="sec-title">Four steps. Zero friction.</h2>
+    <p class="sec-sub" style="max-width:500px; margin:0 auto 52px;">No sportsbook integration needed. No credentials. Just log your bets and let Betra do the rest.</p>
+  </div>
+  <div class="steps reveal">
+    <div class="step"><div class="step-n">1</div><h3>Place Your Bet</h3><p>Bet on any sportsbook as you normally would. Betra never touches your accounts.</p></div>
+    <div class="step"><div class="step-n">2</div><h3>Scan or Enter</h3><p>Upload a screenshot of your slip. OCR auto-fills every detail in seconds.</p></div>
+    <div class="step"><div class="step-n">3</div><h3>Track Live</h3><p>Follow active tickets with live scores and instant notifications when bets settle.</p></div>
+    <div class="step"><div class="step-n">4</div><h3>Analyze & Improve</h3><p>Explore your full analytics dashboard. Find patterns. Refine your strategy.</p></div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="sec pricing" id="pricing" style="text-align:center;">
+  <div class="reveal">
+    <div class="sec-label">Pricing</div>
+    <h2 class="sec-title">Start free. Scale when you're ready.</h2>
+    <p class="sec-sub" style="max-width:460px; margin:0 auto 52px;">Every tier delivers standalone value. Pay only for the depth you need.</p>
+  </div>
+  <div class="tiers-grid reveal">
+    <div class="tier">
+      <div class="t-name">Free</div>
+      <div class="t-price">€0 <span>/mo</span></div>
+      <div class="t-desc">Start tracking with no commitment. See your P&L from day one.</div>
+      <ul class="t-feats">
+        <li><span class="ck">✓</span> Manual bet entry</li>
+        <li><span class="ck">✓</span> Basic P&L + win rate</li>
+        <li><span class="ck">✓</span> 30-day history</li>
+        <li><span class="ck">✓</span> Live score monitoring</li>
+        <li><span class="dx">—</span> <span style="color:rgba(255,255,255,0.22)">OCR scanning</span></li>
+        <li><span class="dx">—</span> <span style="color:rgba(255,255,255,0.22)">Analytics dashboard</span></li>
+      </ul>
+      <button class="t-btn out js-open-modal">Get Started</button>
+    </div>
+    <div class="tier pop">
+      <div class="pop-badge">Most Popular</div>
+      <div class="t-name" style="color:var(--blue-light);">Pro</div>
+      <div class="t-price">€7.99 <span>/mo</span></div>
+      <div class="t-desc">The full analytics layer. For those serious about improving their strategy.</div>
+      <ul class="t-feats">
+        <li><span class="ck">✓</span> Everything in Free</li>
+        <li><span class="ck">✓</span> OCR screenshot scanning</li>
+        <li><span class="ck">✓</span> Unlimited history</li>
+        <li><span class="ck">✓</span> Analytics by sport & league</li>
+        <li><span class="ck">✓</span> Multi-sportsbook comparison</li>
+        <li><span class="ck">✓</span> Advanced notifications</li>
+      </ul>
+      <button class="t-btn fil js-open-modal">Start Pro</button>
+    </div>
+    <div class="tier elx">
+      <div class="t-name" style="color:#a78bfa;">Elite</div>
+      <div class="t-price">€17.99 <span>/mo</span></div>
+      <div class="t-desc">Full power for high-volume, data-driven users who track every detail.</div>
+      <ul class="t-feats">
+        <li><span class="ck">✓</span> Everything in Pro</li>
+        <li><span class="ck">✓</span> Bankroll management</li>
+        <li><span class="ck">✓</span> Streak & pattern analysis</li>
+        <li><span class="ck">✓</span> Data export — CSV & PDF</li>
+        <li><span class="ck">✓</span> Custom tags & categories</li>
+        <li><span class="ck">✓</span> Early access + priority support</li>
+      </ul>
+      <button class="t-btn prm js-open-modal">Go Elite</button>
+    </div>
+  </div>
+</section>
+
+<!-- TEAM -->
+<section class="sec team-sec" id="team" style="text-align:center;">
+  <div class="reveal">
+    <div class="sec-label">The Team</div>
+    <h2 class="sec-title">From spreadsheets to strategy.</h2>
+    <p class="sec-sub" style="max-width:500px; margin:0 auto 52px;">Betra started as a personal problem — tracking performance across multiple sportsbooks was painful. We built the tool we wished existed.</p>
+  </div>
+  <div class="team-grid reveal">
+    <div class="team-card">
+      <div class="t-av">E</div>
+      <div class="t-nm">Edoardo</div>
+      <div class="t-rl">Co-Founder · Strategy & Product</div>
+      <div class="t-bio">Economics & Finance student at Bentley University, currently at LSE. Background in investment analysis and financial modeling. Brings a portfolio-management mindset to how Betra approaches betting data and product design.</div>
+      <div class="t-tags"><span class="ttag">Finance</span><span class="ttag">Product</span><span class="ttag">Analytics</span></div>
+    </div>
+    <div class="team-card">
+      <div class="t-av" style="background:linear-gradient(135deg,#1e3a8a,#2563eb)">L</div>
+      <div class="t-nm">Luca</div>
+      <div class="t-rl">Co-Founder · Technology</div>
+      <div class="t-bio">Technical architect behind the Betra platform. Responsible for building the core infrastructure — from OCR scanning pipelines to the live data integrations powering the real-time dashboard.</div>
+      <div class="t-tags"><span class="ttag">Engineering</span><span class="ttag">Mobile</span><span class="ttag">Data</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-sec">
+  <div class="cta-glow"></div>
+  <div class="reveal">
+    <h2>Ready to take control<br>of your betting data?</h2>
+    <p>Join Betra. Track smarter, analyze deeper, improve continuously.</p>
+    <button class="btn-p js-open-modal" style="font-size:15px; padding:16px 40px;">Start Tracking for Free</button>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div style="display:flex; align-items:center; gap:10px;">
+    <img src="assets/betra-logo.png" alt="Betra" width="22" height="22" style="object-fit:contain;">
+    <span class="ft">© 2026 Betra. All rights reserved.</span>
+  </div>
+  <div class="flinks"><a href="#">Privacy</a><a href="#">Terms</a><a href="#">Contact</a></div>
+</footer>
+
+<script>
+  // Nav scroll effect
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 40);
+  }, { passive: true });
+
+  // Scroll reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // Smooth anchor scrolling
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+
+  // Starfield
+  (function() {
+    const c = document.getElementById('starfield');
+    const ctx = c.getContext('2d');
+    let w, h, stars = [];
+    const COUNT = 90;
+
+    function resize() {
+      w = c.width = window.innerWidth;
+      h = c.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    for (let i = 0; i < COUNT; i++) {
+      stars.push({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        r: Math.random() * 1.2 + 0.3,
+        base: Math.random() * 0.35 + 0.08,
+        phase: Math.random() * Math.PI * 2,
+        speed: Math.random() * 0.003 + 0.001
+      });
+    }
+
+    function draw(t) {
+      ctx.clearRect(0, 0, w, h);
+      for (const s of stars) {
+        const alpha = s.base + Math.sin(t * s.speed + s.phase) * s.base * 0.6;
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(147,197,253,${alpha})`;
+        ctx.fill();
+      }
+      requestAnimationFrame(draw);
+    }
+    requestAnimationFrame(draw);
+  })();
+
+  // Signup modal
+  const modal = document.getElementById('signup-modal');
+  const modalForm = document.getElementById('modal-form');
+  const modalSuccess = document.getElementById('modal-success');
+  const signupForm = document.getElementById('signup-form');
+
+  function openModal() {
+    modal.classList.add('open');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal() {
+    modal.classList.remove('open');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+
+  document.querySelectorAll('.js-open-modal').forEach(btn => btn.addEventListener('click', openModal));
+  document.getElementById('modal-close').addEventListener('click', closeModal);
+  modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && modal.classList.contains('open')) closeModal(); });
+
+  signupForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const submitBtn = form.querySelector('.modal-submit');
+    const originalText = submitBtn.textContent;
+    submitBtn.textContent = 'Sending…';
+    submitBtn.disabled = true;
+
+    try {
+      const res = await fetch(form.action, {
+        method: 'POST',
+        body: new FormData(form),
+        headers: { 'Accept': 'application/json' }
+      });
+      if (res.ok) {
+        modalForm.classList.add('hidden');
+        modalSuccess.classList.add('visible');
+        form.reset();
+      } else {
+        const data = await res.json();
+        throw new Error(data.error || 'Something went wrong');
+      }
+    } catch (err) {
+      submitBtn.textContent = originalText;
+      submitBtn.disabled = false;
+      alert(err.message || 'Please try again.');
+    }
+  });
+</script>
+</body>
+</html>
