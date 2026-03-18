@@ -650,12 +650,18 @@
   }
   .dm-row:hover { background: rgba(255,255,255,0.04); }
   .dm-row-body { flex: 1; min-width: 0; }
-  .dm-sport { color: var(--muted2); font-size: 9px; margin-top: 1px; }
+  .dm-row-title { font-weight: 700; }
+  .dm-row-meta { display: flex; align-items: center; flex-wrap: wrap; gap: 4px; font-size: 9px; margin-top: 1px; color: rgba(255,255,255,0.9); }
+  .dm-row-meta .dm-sport { margin: 0; color: inherit; }
+  .dm-row-meta .dm-row-score { margin: 0; font-weight: 700; flex-shrink: 0; }
+  .dm-row-in-progress .dm-row-score { color: #fb923c; }
+  .dm-row-won .dm-row-score { color: #4ade80; }
+  .dm-row-lost .dm-row-score { color: #f87171; }
+  .dm-row-lost .dm-row-meta .dm-sport { color: #fff; }
   .dm-row-badge { flex-shrink: 0; margin-left: 10px; }
   .dm-row.dm-row-in-progress { border-left: 3px solid #f97316; }
   .dm-row.dm-row-won { border-left: 3px solid #22c55e; }
   .dm-row.dm-row-lost { border-left: 3px solid var(--red); }
-  .dm-row-lost .dm-price-lost { color: rgba(255,255,255,0.85) !important; }
   .dm-row-icon { flex-shrink: 0; width: 22px; height: 22px; margin-right: 10px; display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.8); }
   .dm-row-with-icon { display: flex; align-items: flex-start; flex: 1; min-width: 0; }
 
@@ -1010,7 +1016,7 @@
       </button>
       <div class="lang-dropdown" id="lang-dropdown" role="listbox" aria-hidden="true">
         <button type="button" class="lang-option" role="option" data-locale="en-GB" data-flag="🇬🇧"><span class="flag">🇬🇧</span> British (English)</button>
-        <button type="button" class="lang-option" role="option" data-locale="en-US" data-flag="🇺🇸"><span class="flag">🇺🇸</span> American (English)</button>
+        <button type="button" class="lang-option" role="option" data-locale="es-ES" data-flag="🇪🇸"><span class="flag">🇪🇸</span> Español</button>
         <button type="button" class="lang-option" role="option" data-locale="it" data-flag="🇮🇹"><span class="flag">🇮🇹</span> Italiano</button>
         <button type="button" class="lang-option" role="option" data-locale="fr" data-flag="🇫🇷"><span class="flag">🇫🇷</span> Français</button>
       </div>
@@ -1242,19 +1248,19 @@
           <div class="dm-row dm-row-in-progress">
             <div class="dm-row-with-icon">
               <div class="dm-row-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 7l4.76 3.45-1.76 5.55h-6l-1.76-5.55z"/><path d="M12 7V2"/><path d="M16.76 10.45l4.65-2.2"/><path d="M15 16l3 4.5"/><path d="M9 16l-3 4.5"/><path d="M7.24 10.45l-4.65-2.2"/></svg></div>
-              <div class="dm-row-body"><div style="font-weight:700">Champions League Parlay 4/8</div><div class="dm-sport" data-i18n="product.ticketFormatInProgress">@25.4 · €10 · Win: €254</div></div>
+              <div class="dm-row-body"><div class="dm-row-title">Champions League Parlay</div><div class="dm-row-meta"><span class="dm-sport" data-i18n="product.ticketFormatInProgress">@25.4 · €10 · Win: €254</span><span class="dm-row-score">4/8</span></div></div>
             </div><span class="dm-row-badge" style="color:#fb923c; font-weight:700; font-size:11px;" data-i18n="product.inProgress">IN PROGRESS</span>
           </div>
           <div class="dm-row dm-row-won">
             <div class="dm-row-with-icon">
               <div class="dm-row-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2v20"/><path d="M6 4a9.5 9.5 0 0 1 0 16"/><path d="M18 4a9.5 9.5 0 0 0 0 16"/></svg></div>
-              <div class="dm-row-body"><div style="font-weight:700">NBA Player Props 4/4</div><div class="dm-sport" data-i18n="product.ticketFormatWon">@17 · €5 · Win: €85</div></div>
+              <div class="dm-row-body"><div class="dm-row-title">NBA Player Props</div><div class="dm-row-meta"><span class="dm-sport" data-i18n="product.ticketFormatWon">@17 · €5 · Win: €85</span><span class="dm-row-score">4/4</span></div></div>
             </div><span class="dm-row-badge" style="color:#4ade80; font-weight:700; font-size:11px;" data-i18n="product.won">WON</span>
           </div>
           <div class="dm-row dm-row-lost">
             <div class="dm-row-with-icon">
               <div class="dm-row-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M4.93 4.93a7.5 7.5 0 0 1 0 14.14"/><path d="M19.07 4.93a7.5 7.5 0 0 0 0 14.14"/></svg></div>
-              <div class="dm-row-body"><div style="font-weight:700">Australian Open 0/1</div><div class="dm-sport dm-price-lost" data-i18n="product.ticketFormatLost">@1.85 · €30 · Lost: €72.15</div></div>
+              <div class="dm-row-body"><div class="dm-row-title">Australian Open</div><div class="dm-row-meta"><span class="dm-sport dm-price-lost" data-i18n="product.ticketFormatLost">@1.85 · €30 · Lost: €72.15</span><span class="dm-row-score">0/1</span></div></div>
             </div><span class="dm-row-badge" style="color:#f87171; font-weight:700; font-size:11px;" data-i18n="product.lost">LOST</span>
           </div>
         </div>
